@@ -60,7 +60,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10 pointer-events-none">
-          {product.compareAtPrice && product.compareAtPrice > product.price && (
+          {Boolean(product.compareAtPrice && product.compareAtPrice > product.price) && (
             <Badge variant="sale">Sale</Badge>
           )}
           {product.isNew && <Badge variant="new">New</Badge>}
@@ -117,7 +117,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
           <span className="font-medium text-sm text-primary">
             {formatMoney(product.price)}
           </span>
-          {product.compareAtPrice && product.compareAtPrice > product.price && (
+          {Boolean(product.compareAtPrice && product.compareAtPrice > product.price) && (
             <span className="text-xs text-slate-400 line-through">
               {formatMoney(product.compareAtPrice)}
             </span>

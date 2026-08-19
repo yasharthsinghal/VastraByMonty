@@ -87,7 +87,7 @@ export const QuickViewModal: React.FC = () => {
                 {formatMoney(currentPrice)}
               </span>
             )}
-            {purchaseType === 'one-time' && currentCompareAtPrice && currentCompareAtPrice > currentPrice && (
+            {Boolean(purchaseType === 'one-time' && currentCompareAtPrice && currentCompareAtPrice > currentPrice) && (
               <span className="text-sm text-slate-400 line-through font-normal">
                 {formatMoney(currentCompareAtPrice)}
               </span>

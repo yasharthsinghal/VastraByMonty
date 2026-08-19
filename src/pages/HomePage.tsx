@@ -51,12 +51,18 @@ export const HomePage: React.FC = () => {
               Explore artisanal craftsmanship and minimalist designs built with premium long-staple fabrics.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-              <Button size="lg" className="bg-white text-primary hover:bg-earth-100 font-semibold shadow-md">
-                <Link to="/collections/all">Shop Collection</Link>
-              </Button>
-              <Button variant="outline" size="lg" className="border-white/50 text-white hover:bg-white/10 font-semibold">
-                <Link to="/collections">Browse Categories</Link>
-              </Button>
+              <Link
+                to="/collections/all"
+                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-lg bg-white text-primary hover:bg-slate-100 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg"
+              >
+                Shop Collection
+              </Link>
+              <Link
+                to="/collections"
+                className="inline-flex items-center justify-center px-7 py-3.5 text-sm font-semibold rounded-lg border border-white/50 bg-white/5 backdrop-blur-xs text-white hover:bg-white/15 hover:border-white transition-all"
+              >
+                Browse Categories
+              </Link>
             </div>
           </div>
         </section>

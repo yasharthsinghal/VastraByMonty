@@ -11,23 +11,30 @@ import { ProductGrid } from '../components/ProductGrid';
 import { useCartStore } from '../../cart/store/cartStore';
 import { useUIStore } from '../../../shared/store/uiStore';
 import { useWishlistStore } from '../../../shared/store/wishlistStore';
+import { useCurrency } from '../../../shared/store/currencyStore';
 import { useToast } from '../../../shared/providers/ToastProvider';
-import { Heart, ShoppingBag, Star, RotateCcw, ShieldCheck, Truck } from 'lucide-react';
+import { Heart, ShoppingBag, Star, RotateCcw, ShieldCheck, Truck, Check } from 'lucide-react';
 import { Skeleton } from '../../../shared/components/ui/Skeleton';
 import { EmptyState } from '../../../shared/components/ui/EmptyState';
+import { SubscriptionSelector } from '../components/SubscriptionSelector';
+import { PurchaseType } from '../../cart/types/cart.types';
+import { SellingPlan } from '../types/product.types';
 
 export const ProductDetailPage: React.FC = () => {
   const { handle = '' } = useParams();
   const { data: product, isLoading, isError } = useProduct(handle);
   const { data: relatedProducts } = useFeaturedProducts();
-  const { addItem } = useCartStore();
+  const { addItem, items } = useCartStore();
   const { openCartDrawer } = useUIStore();
   const { isInWishlist, toggleWishlist } = useWishlistStore();
+  const { formatMoney } = useCurrency();
   const { success } = useToast();
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState(1);
+  const [purchaseType, setPurchaseType] = useState<PurchaseType>('one-time');
+  const [selectedSellingPlan, setSelectedSellingPlan] = useState<SellingPlan | undefined>(undefined);
 
   if (isLoading) {
     return (
@@ -58,9 +65,35 @@ export const ProductDetailPage: React.FC = () => {
   const isFavorited = isInWishlist(product.id);
   const images = product.images.length > 0 ? product.images : [product.featuredImage];
 
+  // Resolve selected variant based on chosen options
+  const selectedVariant =
+    product.variants.find((v) => {
+      if (!v.options || v.options.length === 0) return true;
+      return v.options.every(
+        (opt) => (selectedOptions[opt.name] || product.options.find((o) => o.name === opt.name)?.values[0]) === opt.value
+      );
+    }) || product.variants[0];
+
+  const existingCartItem = items.find(
+    (item) => item.productId === product.id && (!selectedVariant || item.variantId === selectedVariant.id)
+  );
+  const isInCart = !!existingCartItem;
+
+  const currentPrice = selectedVariant?.price || product.price;
+  const currentCompareAtPrice = selectedVariant?.compareAtPrice || product.compareAtPrice;
+  const isAvailable = product.available && (selectedVariant ? selectedVariant.available : true);
+
+
+  const discountPercent = purchaseType === 'subscription' ? (selectedSellingPlan?.discountPercentage || 10) : 0;
+  const effectiveUnitPrice = purchaseType === 'subscription'
+    ? currentPrice * (1 - discountPercent / 100)
+    : currentPrice;
+
   const handleAddToCart = () => {
-    addItem(product, undefined, quantity);
-    success('Added to Cart', `${quantity}x ${product.title} added to your cart.`);
+    if (!isAvailable) return;
+    addItem(product, selectedVariant, quantity, purchaseType, purchaseType === 'subscription' ? selectedSellingPlan : undefined);
+    const planText = purchaseType === 'subscription' ? ` (${selectedSellingPlan?.name || 'Subscription'})` : '';
+    success('Added to Cart', `${quantity}x ${product.title}${planText} added to your cart.`);
     openCartDrawer();
   };
 
@@ -72,7 +105,7 @@ export const ProductDetailPage: React.FC = () => {
         <div className="text-sm text-slate-600 leading-relaxed flex flex-col gap-3">
           <p>{product.description}</p>
           <p>
-            Meticulously crafted from premium long-staple fibers to deliver unmatched quality, reflecting a dedication to excellence in every stitch.
+            Meticulously crafted with premium materials and signature artisan detailing. Every stitch reflects our dedication to timeless ready-to-wear luxury.
           </p>
         </div>
       ),
@@ -82,28 +115,23 @@ export const ProductDetailPage: React.FC = () => {
       label: 'Shipping & Returns',
       content: (
         <div className="text-sm text-slate-600 leading-relaxed flex flex-col gap-2">
-          <p>• <strong>Free Worldwide Shipping</strong> on orders over Rs. 2,000.</p>
-          <p>• Standard Delivery: 3-5 business days.</p>
-          <p>• Returns: Within 30 days receive a full refund or exchange.</p>
+          <p>• <strong>Free Worldwide Shipping</strong> on orders over {formatMoney(2000)}.</p>
+          <p>• Standard Delivery: 3-5 business days with tracking.</p>
+          <p>• Returns: Within 30 days for a full refund or exchange.</p>
         </div>
       ),
     },
     {
-      id: 'reviews',
-      label: `Reviews (${product.reviewCount})`,
+      id: 'details',
+      label: 'Product Details',
       content: (
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-3 bg-earth-50 p-4 rounded-lg">
-            <span className="font-serif text-3xl font-bold text-primary">{product.rating}</span>
-            <div>
-              <div className="flex text-amber-400">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current" />
-                ))}
-              </div>
-              <span className="text-xs text-slate-500">Based on {product.reviewCount} verified buyer reviews</span>
-            </div>
-          </div>
+        <div className="text-sm text-slate-600 leading-relaxed flex flex-col gap-2">
+          <p>• <strong>Vendor:</strong> {product.vendor}</p>
+          <p>• <strong>Category:</strong> {product.category}</p>
+          <p>• <strong>Availability:</strong> {isAvailable ? 'In Stock — Ready to ship' : 'Sold Out'}</p>
+          {product.tags.length > 0 && (
+            <p>• <strong>Tags:</strong> {product.tags.join(', ')}</p>
+          )}
         </div>
       ),
     },
@@ -125,7 +153,7 @@ export const ProductDetailPage: React.FC = () => {
           <div className="flex flex-col gap-4 sticky top-24">
             <div className="aspect-[3/4] w-full bg-earth-50 rounded-2xl overflow-hidden border border-slate-100 relative shadow-card">
               <img
-                src={images[selectedImageIndex]}
+                src={images[selectedImageIndex] || product.featuredImage}
                 alt={product.title}
                 className="w-full h-full object-cover object-center"
               />
@@ -165,7 +193,9 @@ export const ProductDetailPage: React.FC = () => {
                 <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
                   {product.vendor}
                 </span>
-                <Badge variant="new">In Stock</Badge>
+                <Badge variant={isAvailable ? 'new' : 'sale'}>
+                  {isAvailable ? 'In Stock' : 'Sold Out'}
+                </Badge>
               </div>
               <h1 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-3">{product.title}</h1>
               <div className="flex items-center gap-3">
@@ -175,17 +205,22 @@ export const ProductDetailPage: React.FC = () => {
                   ))}
                 </div>
                 <span className="text-xs text-slate-500 font-medium">
-                  {product.rating} ({product.reviewCount} customer reviews)
+                  {product.category || 'Luxury Collection'}
                 </span>
               </div>
             </div>
 
             {/* Price */}
             <div className="flex items-baseline gap-4 text-2xl font-bold text-primary border-y border-slate-100 py-4">
-              <span>Rs. {product.price.toFixed(2)}</span>
-              {product.compareAtPrice && product.compareAtPrice > product.price && (
+              <span>{formatMoney(effectiveUnitPrice)}</span>
+              {purchaseType === 'subscription' && (
                 <span className="text-sm text-slate-400 line-through font-normal">
-                  Rs. {product.compareAtPrice.toFixed(2)}
+                  {formatMoney(currentPrice)}
+                </span>
+              )}
+              {purchaseType === 'one-time' && currentCompareAtPrice && currentCompareAtPrice > currentPrice && (
+                <span className="text-sm text-slate-400 line-through font-normal">
+                  {formatMoney(currentCompareAtPrice)}
                 </span>
               )}
             </div>
@@ -218,31 +253,79 @@ export const ProductDetailPage: React.FC = () => {
               </div>
             ))}
 
-            {/* Quantity & Buy CTA */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-2">
-              <div className="flex items-center border border-slate-300 rounded-md">
-                <button
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="px-4 py-3 text-slate-500 hover:text-primary transition-colors font-bold text-sm"
-                >
-                  -
-                </button>
-                <span className="px-4 py-3 text-sm font-bold text-primary min-w-[40px] text-center">
-                  {quantity}
-                </span>
-                <button
-                  onClick={() => setQuantity((q) => q + 1)}
-                  className="px-4 py-3 text-slate-500 hover:text-primary transition-colors font-bold text-sm"
-                >
-                  +
-                </button>
-              </div>
+            {/* Shopify Subscription Module */}
+            <SubscriptionSelector
+              basePrice={currentPrice}
+              purchaseType={purchaseType}
+              onPurchaseTypeChange={setPurchaseType}
+              selectedSellingPlan={selectedSellingPlan}
+              onSellingPlanChange={setSelectedSellingPlan}
+              availableSellingPlans={product.sellingPlanGroups?.[0]?.sellingPlans}
+            />
 
-              <Button onClick={handleAddToCart} size="lg" className="flex-1">
-                <ShoppingBag className="w-4 h-4 mr-2" />
-                Add to Cart — Rs. {(product.price * quantity).toFixed(2)}
-              </Button>
-            </div>
+            {/* Quantity & Buy CTA or Go to Cart */}
+            {isInCart ? (
+              <div className="flex flex-col gap-3 pt-2">
+                <div className="flex items-center justify-between p-3.5 bg-earth-100/70 border border-earth-200 rounded-lg text-xs font-semibold text-earth-900">
+                  <span className="flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-emerald-600" />
+                    Item already added to your cart (Qty: {existingCartItem.quantity})
+                  </span>
+                  <button
+                    onClick={openCartDrawer}
+                    className="text-primary underline font-bold hover:text-accent transition-colors"
+                  >
+                    Edit quantity in cart
+                  </button>
+                </div>
+
+                <Button
+                  onClick={openCartDrawer}
+                  size="lg"
+                  className="w-full"
+                >
+                  <ShoppingBag className="w-4 h-4 mr-2" />
+                  Go to Cart
+                </Button>
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                <div className="flex items-center border border-slate-300 rounded-md">
+                  <button
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    className="px-4 py-3 text-slate-500 hover:text-primary transition-colors font-bold text-sm"
+                    disabled={!isAvailable}
+                  >
+                    -
+                  </button>
+                  <span className="px-4 py-3 text-sm font-bold text-primary min-w-[40px] text-center">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => setQuantity((q) => q + 1)}
+                    className="px-4 py-3 text-slate-500 hover:text-primary transition-colors font-bold text-sm"
+                    disabled={!isAvailable}
+                  >
+                    +
+                  </button>
+                </div>
+
+                <Button
+                  onClick={handleAddToCart}
+                  size="lg"
+                  className="flex-1"
+                  disabled={!isAvailable}
+                >
+                  <ShoppingBag className="w-4 h-4 mr-2" />
+                  {isAvailable
+                    ? `Add to Cart — ${formatMoney(effectiveUnitPrice * quantity)}`
+                    : 'Sold Out'}
+                </Button>
+              </div>
+            )}
+
+
+
 
             {/* Perks */}
             <div className="grid grid-cols-3 gap-4 border-t border-slate-100 pt-6 text-center text-xs text-slate-600">

@@ -19,6 +19,20 @@ export interface ProductOption {
   values: string[];
 }
 
+export interface SellingPlan {
+  id: string;
+  name: string;
+  description?: string;
+  discountPercentage?: number;
+  frequencyMonths?: number;
+}
+
+export interface SellingPlanGroup {
+  id?: string;
+  name: string;
+  sellingPlans: SellingPlan[];
+}
+
 export interface Product {
   id: string;
   handle: string;
@@ -40,7 +54,9 @@ export interface Product {
   rating?: number;
   reviewCount?: number;
   detailsHtml?: string;
+  sellingPlanGroups?: SellingPlanGroup[];
 }
+
 
 export interface ProductFilter {
   collection?: string;

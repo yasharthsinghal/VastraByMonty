@@ -1,20 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useCartStore } from '../store/cartStore';
+import { useCurrency } from '../../../shared/store/currencyStore';
 import { CartItemRow } from '../components/CartItem';
 import { Breadcrumb } from '../../../shared/components/ui/Breadcrumb';
 import { Button } from '../../../shared/components/ui/Button';
 import { brandConfig } from '../../../config/brand';
-import { ShoppingBag, ArrowRight, Truck, Trash2 } from 'lucide-react';
+import { ShoppingBag, ArrowRight, Truck, Trash2, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const CartPage: React.FC = () => {
-  const { items, getSubtotal, getTotalQuantity, clearCart } = useCartStore();
+  const { items, getSubtotal, getTotalQuantity, clearCart, createCheckoutUrl } = useCartStore();
+  const { formatMoney } = useCurrency();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const subtotal = getSubtotal();
   const totalQuantity = getTotalQuantity();
   const threshold = brandConfig.freeShippingThreshold;
   const remaining = threshold - subtotal;
+
+  const handleCheckout = async () => {
+    setIsCheckingOut(true);
+    try {
+      const checkoutUrl = await createCheckoutUrl();
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      }
+    } catch (err: unknown) {
+      alert((err as Error).message || 'Failed to initialize checkout. Please try again.');
+      setIsCheckingOut(false);
+    }
+  };
 
   return (
     <>
@@ -48,13 +64,13 @@ export const CartPage: React.FC = () => {
               Before proceeding to checkout you must add some products to your shopping cart.
             </p>
             <Button size="lg">
-              <Link to="/collections/all">Start Shopping</Link>
+              <Link to="/collections">Browse Collections</Link>
             </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
             {/* Items Column */}
-            <div className="lg:col-span-2 flex flex-col divide-y divide-slate-100 bg-white p-6 rounded-xl border border-slate-100 shadow-card">
+            <div className="lg:col-span-2 flex flex-col">
               {items.map((item) => (
                 <CartItemRow key={item.id} item={item} />
               ))}
@@ -72,30 +88,42 @@ export const CartPage: React.FC = () => {
                 {remaining <= 0 ? (
                   <span className="font-bold text-emerald-700">You qualify for FREE worldwide shipping!</span>
                 ) : (
-                  <span>Add <strong>Rs. {remaining.toFixed(2)}</strong> more for free shipping</span>
+                  <span>Add <strong>{formatMoney(remaining)}</strong> more for free shipping</span>
                 )}
               </div>
 
               <div className="flex justify-between text-sm text-slate-600">
                 <span>Subtotal ({totalQuantity} items)</span>
-                <span className="font-bold text-primary">Rs. {subtotal.toFixed(2)}</span>
+                <span className="font-bold text-primary">{formatMoney(subtotal)}</span>
               </div>
               <div className="flex justify-between text-sm text-slate-600">
                 <span>Estimated Shipping</span>
-                <span className="font-medium">{remaining <= 0 ? 'FREE' : 'Rs. 250.00'}</span>
+                <span className="font-medium text-emerald-700">{remaining <= 0 ? 'FREE' : formatMoney(250)}</span>
               </div>
 
               <div className="border-t border-earth-200 pt-4 flex justify-between items-center text-lg font-bold text-primary">
                 <span>Total</span>
-                <span className="text-xl">Rs. {(subtotal + (remaining <= 0 ? 0 : 250)).toFixed(2)}</span>
+                <span className="text-xl font-bold text-primary">
+                  {formatMoney(subtotal + (remaining <= 0 ? 0 : 250))}
+                </span>
               </div>
 
               <Button
-                onClick={() => alert('Shopify Checkout flow triggered! Storefront API integration ready.')}
+                onClick={handleCheckout}
                 size="lg"
                 className="w-full"
+                disabled={isCheckingOut}
               >
-                Proceed to Checkout <ArrowRight className="w-4 h-4 ml-2" />
+                {isCheckingOut ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Redirecting to Shopify Checkout…
+                  </>
+                ) : (
+                  <>
+                    Proceed to Checkout <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
               </Button>
             </div>
           </div>

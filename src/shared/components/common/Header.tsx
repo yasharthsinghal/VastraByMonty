@@ -5,6 +5,7 @@ import { Navigation } from './Navigation';
 import { useUIStore } from '../../store/uiStore';
 import { useCartStore } from '../../../features/cart/store/cartStore';
 import { useAuth } from '../../../features/auth/hooks/useAuth';
+import { useCurrency } from '../../store/currencyStore';
 import { brandConfig } from '../../../config/brand';
 import { Search, ShoppingBag, User, Menu, Globe } from 'lucide-react';
 
@@ -13,7 +14,7 @@ export const Header: React.FC = () => {
   const { openCartDrawer, openMobileNav, openSearchModal } = useUIStore();
   const { getTotalQuantity, getSubtotal } = useCartStore();
   const { isAuthenticated, user } = useAuth();
-  const [currency, setCurrency] = useState(brandConfig.defaultCurrency);
+  const { currentCurrency, setCurrency, formatMoney, currencies } = useCurrency();
 
   const totalQuantity = getTotalQuantity();
   const subtotal = getSubtotal();
@@ -56,16 +57,16 @@ export const Header: React.FC = () => {
           {/* Right: Actions (Search, Currency, Account, Cart) */}
           <div className="flex items-center gap-3 sm:gap-5">
             {/* Currency Selector */}
-            <div className="hidden lg:flex items-center text-xs font-semibold text-slate-600 gap-1">
-              <Globe className="w-3.5 h-3.5 text-slate-400" />
+            <div className="hidden lg:flex items-center text-xs font-semibold text-slate-600 gap-1 bg-slate-50 px-2 py-1 rounded-md border border-slate-200">
+              <Globe className="w-3.5 h-3.5 text-accent" />
               <select
-                value={currency}
+                value={currentCurrency}
                 onChange={(e) => setCurrency(e.target.value)}
-                className="bg-transparent focus:outline-none cursor-pointer text-xs font-semibold"
+                className="bg-transparent focus:outline-none cursor-pointer text-xs font-semibold text-primary"
               >
-                {brandConfig.currencies.map((c) => (
+                {currencies.map((c) => (
                   <option key={c.code} value={c.code}>
-                    {c.code} ({c.symbol})
+                    {c.label}
                   </option>
                 ))}
               </select>
@@ -103,7 +104,7 @@ export const Header: React.FC = () => {
               <ShoppingBag className="w-4 h-4" />
               <span className="hidden sm:inline">Cart</span>
               <span className="bg-white text-primary text-[10px] font-extrabold px-1.5 py-0.5 rounded-full">
-                Rs. {subtotal.toFixed(2)} ({totalQuantity})
+                {formatMoney(subtotal)} ({totalQuantity})
               </span>
             </button>
           </div>
@@ -112,3 +113,4 @@ export const Header: React.FC = () => {
     </header>
   );
 };
+

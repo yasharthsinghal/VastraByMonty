@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useUIStore } from '../../../shared/store/uiStore';
 import { useSearchStore } from '../store/searchStore';
 import { useProducts } from '../../products/hooks/useProducts';
+import { useCurrency } from '../../../shared/store/currencyStore';
 import { Search, X, TrendingUp, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -9,7 +10,9 @@ export const SearchModal: React.FC = () => {
   const { isSearchModalOpen, closeSearchModal } = useUIStore();
   const { query, setQuery, clearQuery, recentSearches, addRecentSearch } = useSearchStore();
   const { data: products } = useProducts({ searchQuery: query });
+  const { formatMoney } = useCurrency();
   const navigate = useNavigate();
+
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -123,10 +126,11 @@ export const SearchModal: React.FC = () => {
                     <span className="font-serif text-sm font-semibold text-primary group-hover:text-accent transition-colors line-clamp-1">
                       {product.title}
                     </span>
-                    <span className="text-xs text-slate-600 font-medium">Rs. {product.price.toFixed(2)}</span>
+                    <span className="text-xs text-slate-600 font-medium">{formatMoney(product.price)}</span>
                   </Link>
                 ))}
               </div>
+
             ) : (
               <p className="text-sm text-slate-500 py-8 text-center">
                 No products found matching "{query}". Try searching for "blouse", "coat", or "tote".

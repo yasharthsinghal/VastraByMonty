@@ -1,69 +1,69 @@
 {
-  "hero": {
-    "title": "Introducing",
-    "subtitle": "Pipeline theme",
-    "description": "Clean, fast, and focused on sales",
-    "primaryCta": { "label": "View products", "href": "/collections/all" },
-    "secondaryCta": { "label": "Learn more", "href": "/contact" },
-    "image": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&q=80"
-  },
-  "promoCountdown": {
-    "title": "Powerful & Flexible",
-    "subtitle": "Nested blocks",
-    "description": "An all new way to build sections in the Shopify theme editor. Create your own layouts with flexible content blocks.",
-    "targetDate": "2026-12-31T23:59:59Z",
-    "primaryCta": { "label": "All products", "href": "/collections/all" },
-    "secondaryCta": { "label": "Learn more", "href": "/" }
-  },
-  "imageWithText": {
-    "title": "Image with text",
-    "description": "Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.",
-    "image": "https://images.unsplash.com/photo-1445205170230-053b83016050?w=1000&q=80",
-    "cta": { "label": "Shop the look", "href": "/collections/featured" }
-  },
-  "detailsSection": {
-    "title": "The Details",
-    "items": [
-      {
-        "title": "Meticulously crafted",
-        "description": "Meticulously crafted to deliver unmatched quality, reflecting a dedication to excellence in every detail."
-      },
-      {
-        "title": "Versatility & Practicality",
-        "description": "Designed with versatility and practicality in mind. Made for you, and for whatever your day demands."
-      },
-      {
-        "title": "Unique Inspiration",
-        "description": "Carefully crafted to complement your unique way of being you, we strive to bring a touch of inspiration to your life."
-      }
+    "hero": {
+        "title": "Introducing",
+        "subtitle": "Monts",
+        "description": "Clean, fast, and focused on sales",
+        "primaryCta": { "label": "View products", "href": "/collections/all" },
+        "secondaryCta": { "label": "Learn more", "href": "/contact" },
+        "image": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&q=80"
+    },
+    "promoCountdown": {
+        "title": "Powerful & Flexible",
+        "subtitle": "Nested blocks",
+        "description": "An all new way to build sections in the Shopify theme editor. Create your own layouts with flexible content blocks.",
+        "targetDate": "2026-12-31T23:59:59Z",
+        "primaryCta": { "label": "All products", "href": "/collections/all" },
+        "secondaryCta": { "label": "Learn more", "href": "/" }
+    },
+    "imageWithText": {
+        "title": "Image with text",
+        "description": "Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.",
+        "image": "https://images.unsplash.com/photo-1445205170230-053b83016050?w=1000&q=80",
+        "cta": { "label": "Shop the look", "href": "/collections/featured" }
+    },
+    "detailsSection": {
+        "title": "The Details",
+        "items": [
+            {
+                "title": "Meticulously crafted",
+                "description": "Meticulously crafted to deliver unmatched quality, reflecting a dedication to excellence in every detail."
+            },
+            {
+                "title": "Versatility & Practicality",
+                "description": "Designed with versatility and practicality in mind. Made for you, and for whatever your day demands."
+            },
+            {
+                "title": "Unique Inspiration",
+                "description": "Carefully crafted to complement your unique way of being you, we strive to bring a touch of inspiration to your life."
+            }
+        ]
+    },
+    "keyFeatures": [
+        "Crafted with precision and attention to detail, we ensure excellence. Designed to meet the highest standards, ensuring an exceptional experience every time.",
+        "Made to perform when it matters most, we offer quality that you can count on. Tested and proven to deliver consistent results, it's made for everyday use and beyond.",
+        "Using only the finest inputs, we are able to craft a result that stands apart. The details matter and we put time and effort into ensuring our customers get the best."
+    ],
+    "blogPosts": [
+        {
+            "id": "post_1",
+            "title": "The Art of Minimalist Layering for Autumn",
+            "excerpt": "Discover how fluid silk blouses and cashmere overcoats combine to create elevated seasonal silhouettes.",
+            "date": "August 02, 2026",
+            "image": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&q=80"
+        },
+        {
+            "id": "post_2",
+            "title": "Behind the Design: Pipeline Theme Architecture",
+            "excerpt": "Exploring the design ethos behind the high-conversion storefront aesthetic.",
+            "date": "July 28, 2026",
+            "image": "https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&q=80"
+        },
+        {
+            "id": "post_3",
+            "title": "Sustainable Calfskin & Mulberry Silk Care Guide",
+            "excerpt": "Essential care instructions to ensure your investment pieces last a lifetime.",
+            "date": "July 15, 2026",
+            "image": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=80"
+        }
     ]
-  },
-  "keyFeatures": [
-    "Crafted with precision and attention to detail, we ensure excellence. Designed to meet the highest standards, ensuring an exceptional experience every time.",
-    "Made to perform when it matters most, we offer quality that you can count on. Tested and proven to deliver consistent results, it's made for everyday use and beyond.",
-    "Using only the finest inputs, we are able to craft a result that stands apart. The details matter and we put time and effort into ensuring our customers get the best."
-  ],
-  "blogPosts": [
-    {
-      "id": "post_1",
-      "title": "The Art of Minimalist Layering for Autumn",
-      "excerpt": "Discover how fluid silk blouses and cashmere overcoats combine to create elevated seasonal silhouettes.",
-      "date": "August 02, 2026",
-      "image": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&q=80"
-    },
-    {
-      "id": "post_2",
-      "title": "Behind the Design: Pipeline Theme Architecture",
-      "excerpt": "Exploring the design ethos behind the high-conversion storefront aesthetic.",
-      "date": "July 28, 2026",
-      "image": "https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&q=80"
-    },
-    {
-      "id": "post_3",
-      "title": "Sustainable Calfskin & Mulberry Silk Care Guide",
-      "excerpt": "Essential care instructions to ensure your investment pieces last a lifetime.",
-      "date": "July 15, 2026",
-      "image": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=80"
-    }
-  ]
 }

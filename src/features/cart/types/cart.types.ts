@@ -1,4 +1,6 @@
-import { Product, ProductVariant } from '../../products/types/product.types';
+import { Product, ProductVariant, SellingPlan } from '../../products/types/product.types';
+
+export type PurchaseType = 'one-time' | 'subscription';
 
 export interface CartItem {
   id: string;
@@ -7,6 +9,9 @@ export interface CartItem {
   product: Product;
   variant: ProductVariant;
   quantity: number;
+  purchaseType?: PurchaseType;
+  sellingPlan?: SellingPlan;
+  subscriptionDiscount?: number; // e.g. 10 (%)
 }
 
 export interface Cart {
@@ -17,3 +22,4 @@ export interface Cart {
   currency: string;
   checkoutUrl?: string;
 }
+

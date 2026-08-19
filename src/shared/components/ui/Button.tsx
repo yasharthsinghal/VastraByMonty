@@ -22,7 +22,7 @@ export const Button: React.FC<ButtonProps> = ({
 
     const variants = {
         primary:
-            "bg-primary text-black hover:bg-primary-hover hover:text-white focus:ring-primary",
+            "bg-primary text-white hover:bg-primary-hover focus:ring-primary",
         secondary:
             "bg-earth-100 text-earth-900 hover:bg-earth-200 focus:ring-earth-300",
         outline:
@@ -30,6 +30,7 @@ export const Button: React.FC<ButtonProps> = ({
         ghost: "text-slate-700 hover:bg-slate-100 focus:ring-slate-300",
         accent: "bg-accent text-white hover:bg-accent-dark focus:ring-accent-light",
     };
+
 
     const sizes = {
         sm: "text-xs px-3 py-1.5 min-h-[32px]",

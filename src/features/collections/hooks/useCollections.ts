@@ -5,7 +5,7 @@ export function useCollections() {
   return useQuery({
     queryKey: ['collections'],
     queryFn: () => collectionRepository.getCollections(),
-    staleTime: 1000 * 60 * 10,
+    staleTime: 1000 * 15,
   });
 }
 
@@ -14,6 +14,7 @@ export function useCollection(handle: string) {
     queryKey: ['collection', handle],
     queryFn: () => collectionRepository.getCollectionByHandle(handle),
     enabled: !!handle,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 15,
   });
 }
+

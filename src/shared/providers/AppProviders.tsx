@@ -7,11 +7,14 @@ import { ToastProvider } from './ToastProvider';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
+      staleTime: 1000 * 15, // 15 seconds fresh cache — changes in Shopify reflect promptly
       retry: 1,
     },
   },
 });
+
 
 export const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (

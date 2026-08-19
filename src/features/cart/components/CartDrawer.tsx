@@ -1,22 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Drawer } from '../../../shared/components/ui/Drawer';
 import { useUIStore } from '../../../shared/store/uiStore';
 import { useCartStore } from '../store/cartStore';
+import { useCurrency } from '../../../shared/store/currencyStore';
 import { CartItemRow } from './CartItem';
 import { Button } from '../../../shared/components/ui/Button';
 import { brandConfig } from '../../../config/brand';
-import { ShoppingBag, ArrowRight, Truck } from 'lucide-react';
+import { ShoppingBag, ArrowRight, Truck, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const CartDrawer: React.FC = () => {
   const { isCartDrawerOpen, closeCartDrawer } = useUIStore();
-  const { items, getSubtotal, getTotalQuantity } = useCartStore();
+  const { items, getSubtotal, getTotalQuantity, createCheckoutUrl } = useCartStore();
+  const { formatMoney } = useCurrency();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const subtotal = getSubtotal();
   const totalQuantity = getTotalQuantity();
   const threshold = brandConfig.freeShippingThreshold;
   const progress = Math.min(100, (subtotal / threshold) * 100);
   const remaining = threshold - subtotal;
+
+  const handleCheckout = async () => {
+    setIsCheckingOut(true);
+    try {
+      const checkoutUrl = await createCheckoutUrl();
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      }
+    } catch (err: unknown) {
+      alert((err as Error).message || 'Failed to initialize checkout. Please try again.');
+      setIsCheckingOut(false);
+    }
+  };
 
   return (
     <Drawer isOpen={isCartDrawerOpen} onClose={closeCartDrawer} title={`Your Cart (${totalQuantity})`}>
@@ -29,7 +45,7 @@ export const CartDrawer: React.FC = () => {
               {remaining <= 0 ? (
                 <span className="font-semibold text-emerald-700">You qualify for FREE worldwide shipping!</span>
               ) : (
-                <span>Add <strong className="text-primary">Rs. {remaining.toFixed(2)}</strong> more for FREE shipping</span>
+                <span>Add <strong className="text-primary">{formatMoney(remaining)}</strong> more for FREE shipping</span>
               )}
             </span>
           </div>
@@ -70,19 +86,27 @@ export const CartDrawer: React.FC = () => {
           <div className="border-t border-slate-100 pt-4 mt-4 flex flex-col gap-3">
             <div className="flex justify-between items-center text-sm font-semibold text-primary">
               <span>Subtotal</span>
-              <span className="text-base font-bold">Rs. {subtotal.toFixed(2)}</span>
+              <span className="text-base font-bold">{formatMoney(subtotal)}</span>
             </div>
             <p className="text-[11px] text-slate-500">Shipping & taxes calculated at checkout.</p>
             
             <div className="flex flex-col gap-2 pt-2">
               <Button
-                onClick={() => {
-                  alert('Shopify Checkout flow simulation. Ready for Storefront API checkout URL integration!');
-                }}
+                onClick={handleCheckout}
                 className="w-full"
                 size="lg"
+                disabled={isCheckingOut}
               >
-                Checkout <ArrowRight className="w-4 h-4 ml-2" />
+                {isCheckingOut ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Redirecting to Shopify Checkout…
+                  </>
+                ) : (
+                  <>
+                    Checkout <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
               </Button>
               <Button
                 onClick={closeCartDrawer}
@@ -99,3 +123,4 @@ export const CartDrawer: React.FC = () => {
     </Drawer>
   );
 };
+

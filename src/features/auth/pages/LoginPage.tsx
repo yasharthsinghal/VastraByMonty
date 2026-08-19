@@ -6,7 +6,7 @@ import { Input } from '../../../shared/components/ui/Input';
 import { Button } from '../../../shared/components/ui/Button';
 import { Breadcrumb } from '../../../shared/components/ui/Breadcrumb';
 import { useToast } from '../../../shared/providers/ToastProvider';
-import { KeyRound, Mail, AlertCircle, Sparkles } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -43,16 +43,6 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const fillCredentials = (type: 'admin' | 'customer') => {
-    if (type === 'admin') {
-      setEmail('admin@example.com');
-      setPassword('admin123');
-    } else {
-      setEmail('customer@example.com');
-      setPassword('customer123');
-    }
-  };
-
   return (
     <>
       <Helmet>
@@ -67,29 +57,6 @@ export const LoginPage: React.FC = () => {
           <p className="text-xs text-slate-500 mt-1">Access your saved orders, addresses, and wishlist.</p>
         </div>
 
-        {/* Demo Credentials Quick Fill Bar */}
-        <div className="bg-earth-50 p-4 rounded-xl border border-earth-100 flex flex-col gap-2 text-xs">
-          <span className="font-bold text-earth-900 flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5 text-accent" /> Quick Fill Seed Accounts:
-          </span>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => fillCredentials('admin')}
-              className="flex-1 py-1.5 px-3 bg-white border border-earth-200 rounded font-semibold text-earth-800 hover:bg-earth-100 transition-colors"
-            >
-              Admin Demo
-            </button>
-            <button
-              type="button"
-              onClick={() => fillCredentials('customer')}
-              className="flex-1 py-1.5 px-3 bg-white border border-earth-200 rounded font-semibold text-earth-800 hover:bg-earth-100 transition-colors"
-            >
-              Customer Demo
-            </button>
-          </div>
-        </div>
-
         {errorMsg && (
           <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-md flex items-center gap-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -101,7 +68,7 @@ export const LoginPage: React.FC = () => {
           <Input
             label="Email Address"
             type="email"
-            placeholder="e.g. customer@example.com"
+            placeholder="your@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -146,3 +113,4 @@ export const LoginPage: React.FC = () => {
     </>
   );
 };
+

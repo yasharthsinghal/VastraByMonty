@@ -5,6 +5,7 @@ import { Badge } from '../../../shared/components/ui/Badge';
 import { useWishlistStore } from '../../../shared/store/wishlistStore';
 import { useUIStore } from '../../../shared/store/uiStore';
 import { useCartStore } from '../../cart/store/cartStore';
+import { useCurrency } from '../../../shared/store/currencyStore';
 import { useToast } from '../../../shared/providers/ToastProvider';
 import { Heart, Eye, ShoppingBag } from 'lucide-react';
 
@@ -13,7 +14,9 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const { isInWishlist, toggleWishlist } = useWishlistStore();
   const { openQuickView, openCartDrawer } = useUIStore();
   const { addItem } = useCartStore();
+  const { formatMoney } = useCurrency();
   const { success } = useToast();
+
 
   const isFavorited = isInWishlist(product.id);
   const secondaryImage = product.images[1] || product.featuredImage;
@@ -112,11 +115,11 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
         {/* Price */}
         <div className="flex items-center gap-2 mt-1">
           <span className="font-medium text-sm text-primary">
-            Rs. {product.price.toFixed(2)}
+            {formatMoney(product.price)}
           </span>
           {product.compareAtPrice && product.compareAtPrice > product.price && (
             <span className="text-xs text-slate-400 line-through">
-              Rs. {product.compareAtPrice.toFixed(2)}
+              {formatMoney(product.compareAtPrice)}
             </span>
           )}
         </div>
@@ -124,3 +127,4 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
     </div>
   );
 };
+

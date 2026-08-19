@@ -4,10 +4,8 @@ import { Link } from 'react-router-dom';
 import { useProducts, useFeaturedProducts } from '../features/products/hooks/useProducts';
 import { useCollections } from '../features/collections/hooks/useCollections';
 import { ProductGrid } from '../features/products/components/ProductGrid';
-import { CountdownTimer } from '../shared/components/ui/CountdownTimer';
 import { brandConfig } from '../config/brand';
-import bannersData from '../mock/data/banners.json';
-import { ArrowRight, RotateCcw, Globe, Headphones, Play, Sparkles, ChevronRight } from 'lucide-react';
+import { ArrowRight, RotateCcw, Globe, Headphones, ChevronRight, Sparkles } from 'lucide-react';
 import { Button } from '../shared/components/ui/Button';
 
 export const HomePage: React.FC = () => {
@@ -15,182 +13,141 @@ export const HomePage: React.FC = () => {
   const { data: allProducts, isLoading: loadingAll } = useProducts();
   const { data: collections } = useCollections();
 
-  const hero = bannersData.hero;
-  const promo = bannersData.promoCountdown;
-  const imageWithText = bannersData.imageWithText;
-  const details = bannersData.detailsSection;
+  const heroImage =
+    featuredProducts?.[0]?.featuredImage ||
+    allProducts?.[0]?.featuredImage ||
+    'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&q=85';
 
   return (
     <>
       <Helmet>
-        <title>MONTS — Luxury Ready-to-Wear Fashion Storefront</title>
+        <title>{brandConfig.name} — Luxury Ready-to-Wear Fashion Storefront</title>
         <meta
           name="description"
-          content="MONTS offering minimalist luxury fashion, ready-to-wear garments, accessories, and Pipeline theme storefront experience."
+          content="Explore artisanal handcrafted garments, ready-to-wear silhouettes, and accessories on the official MONTS storefront."
         />
       </Helmet>
 
       <div className="flex flex-col gap-16 md:gap-24 pb-16">
         {/* HERO BANNER */}
-        <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-earth-900 text-white">
+        <section className="relative min-h-[75vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden bg-earth-900 text-white">
           <div className="absolute inset-0 z-0">
             <img
-              src={hero.image}
-              alt={hero.title}
-              className="w-full h-full object-cover opacity-40 scale-105 animate-pulse duration-[10000ms]"
+              src={heroImage}
+              alt="MONTS Luxury Collection"
+              className="w-full h-full object-cover opacity-45 scale-105 transition-transform duration-1000"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/50 to-transparent" />
           </div>
 
           <div className="relative z-10 max-w-4xl mx-auto px-6 text-center flex flex-col items-center gap-6">
-            <span className="text-xs uppercase tracking-[0.3em] font-semibold text-accent-light">
-              {hero.title}
+            <span className="text-xs uppercase tracking-[0.3em] font-semibold text-accent-light flex items-center gap-2">
+              <Sparkles className="w-3.5 h-3.5" /> Ready-to-Wear Collection
             </span>
             <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-tight">
-              {hero.subtitle}
+              Timeless Luxury, Handcrafted Silhouettes
             </h1>
-            <p className="text-base sm:text-xl text-slate-300 font-light max-w-xl">
-              {hero.description}
+            <p className="text-base sm:text-xl text-slate-200 font-light max-w-xl">
+              Explore artisanal craftsmanship and minimalist designs built with premium long-staple fabrics.
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-              <Button size="lg" className="bg-white text-primary hover:bg-earth-100">
-                <Link to={hero.primaryCta.href}>{hero.primaryCta.label}</Link>
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+              <Button size="lg" className="bg-white text-primary hover:bg-earth-100 font-semibold shadow-md">
+                <Link to="/collections/all">Shop Collection</Link>
               </Button>
-              <Button variant="outline" size="lg" className="border-white/40 text-white hover:bg-white/10">
-                <Link to={hero.secondaryCta.href}>{hero.secondaryCta.label}</Link>
+              <Button variant="outline" size="lg" className="border-white/50 text-white hover:bg-white/10 font-semibold">
+                <Link to="/collections">Browse Categories</Link>
               </Button>
             </div>
           </div>
         </section>
 
-        {/* FEATURED COLLECTIONS CAROUSEL / GRID */}
-        <section className="max-w-7xl mx-auto px-6 md:px-8 w-full">
-          <div className="flex justify-between items-end mb-8 border-b border-slate-100 pb-4">
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-widest text-accent block mb-1">Curated</span>
-              <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary">Featured Collections</h2>
-            </div>
-            <Link to="/collections" className="text-xs font-semibold text-primary hover:text-accent transition-colors flex items-center gap-1">
-              View all collections <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {collections?.slice(0, 3).map((col) => (
-              <Link
-                key={col.id}
-                to={`/collections/${col.handle}`}
-                className="group relative aspect-[4/5] rounded-xl overflow-hidden shadow-card border border-slate-100 flex items-end p-6"
-              >
-                <img
-                  src={col.image}
-                  alt={col.title}
-                  loading="lazy"
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/30 to-transparent" />
-                <div className="relative z-10 text-white flex flex-col gap-1">
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-accent-light">
-                    Collection ({col.productCount} Items)
-                  </span>
-                  <h3 className="font-serif text-xl font-bold">{col.title}</h3>
-                  <span className="text-xs text-slate-300 group-hover:underline flex items-center gap-1 mt-1">
-                    View the collection <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* SHOP THE LOOK / IMAGE WITH TEXT */}
-        <section className="bg-earth-50 py-16 md:py-24 border-y border-earth-100">
-          <div className="max-w-7xl mx-auto px-6 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-elevated border border-earth-200">
-              <img
-                src={imageWithText.image}
-                alt={imageWithText.title}
-                className="w-full h-full object-cover"
-              />
-              {/* Hotspot pin */}
-              <div className="absolute top-1/3 left-1/2 -translate-x-1/2 p-3 bg-white/90 backdrop-blur-md rounded-full shadow-card animate-bounce">
-                <Sparkles className="w-5 h-5 text-accent" />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-6">
-              <span className="text-xs uppercase tracking-widest font-semibold text-accent">Brand Story</span>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary">{imageWithText.title}</h2>
-              <p className="text-slate-600 text-sm md:text-base leading-relaxed">
-                {imageWithText.description}
-              </p>
+        {/* FEATURED COLLECTIONS */}
+        {collections && collections.length > 0 && (
+          <section className="max-w-7xl mx-auto px-6 md:px-8 w-full">
+            <div className="flex justify-between items-end mb-8 border-b border-slate-100 pb-4">
               <div>
-                <Button size="lg" className="bg-primary text-white hover:bg-primary-hover">
-                  <Link to={imageWithText.cta.href}>{imageWithText.cta.label}</Link>
-                </Button>
+                <span className="text-xs font-semibold uppercase tracking-widest text-accent block mb-1">
+                  Artisanal Heritage
+                </span>
+                <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary">
+                  Curated Series
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Hand-block prints, quilted cotton textures, and limited luxury batch pieces.
+                </p>
               </div>
+              <Link
+                to="/collections"
+                className="text-xs font-semibold text-primary hover:text-accent transition-colors flex items-center gap-1"
+              >
+                View all collections <ChevronRight className="w-4 h-4" />
+              </Link>
             </div>
-          </div>
-        </section>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {collections.slice(0, 3).map((col) => (
+                <Link
+                  key={col.id}
+                  to={`/collections/${col.handle}`}
+                  className="group relative aspect-[4/5] rounded-xl overflow-hidden shadow-card border border-slate-100 flex items-end p-6"
+                >
+                  <img
+                    src={col.image}
+                    alt={col.title}
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/30 to-transparent" />
+                  <div className="relative z-10 text-white flex flex-col gap-1">
+                    <span className="text-[10px] font-semibold uppercase tracking-widest text-accent-light">
+                      Artisan Line ({col.productCount} Products)
+                    </span>
+                    <h3 className="font-serif text-xl font-bold">{col.title}</h3>
+                    <span className="text-xs text-slate-300 group-hover:underline flex items-center gap-1 mt-1">
+                      Explore series <ArrowRight className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* FEATURED PRODUCTS */}
         <section className="max-w-7xl mx-auto px-6 md:px-8 w-full">
           <div className="text-center max-w-xl mx-auto mb-12">
-            <span className="text-xs font-semibold uppercase tracking-widest text-accent block mb-1">Handpicked</span>
-            <h2 className="font-serif text-3xl font-bold text-primary mb-3">Featured Products</h2>
-            <p className="text-xs text-slate-500">Explore signature minimalist pieces crafted from Mulberry silk & fine cashmere.</p>
+            <span className="text-xs font-semibold uppercase tracking-widest text-accent block mb-1">
+              Signature Collection
+            </span>
+            <h2 className="font-serif text-3xl font-bold text-primary mb-3">
+              Handcrafted Artisanal Essentials
+            </h2>
+            <p className="text-xs text-slate-500">
+              Meticulously handcrafted block-printed cotton totes, quilted travel pouches, and minimalist accessories.
+            </p>
           </div>
 
           <ProductGrid products={featuredProducts} isLoading={loadingFeatured} />
         </section>
 
-        {/* PROMOTIONAL COUNTDOWN SECTION */}
-        <section className="bg-primary text-white py-16 md:py-24 relative overflow-hidden">
-          <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center gap-4 relative z-10">
-            <span className="text-xs uppercase tracking-[0.25em] font-semibold text-accent-light">
-              {promo.subtitle}
-            </span>
-            <h2 className="font-serif text-3xl sm:text-5xl font-bold">{promo.title}</h2>
-            <p className="text-sm sm:text-base text-slate-300 max-w-lg">{promo.description}</p>
-
-            {/* Countdown Component */}
-            <CountdownTimer targetDate={promo.targetDate} />
-
-            <div className="flex gap-4 pt-2">
-              <Button size="lg" className="bg-accent text-white hover:bg-accent-dark">
-                <Link to={promo.primaryCta.href}>{promo.primaryCta.label}</Link>
-              </Button>
-              <Button variant="outline" size="lg" className="border-slate-700 text-slate-300 hover:bg-slate-800">
-                <Link to={promo.secondaryCta.href}>{promo.secondaryCta.label}</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* THE DETAILS / BRAND VALUES */}
-        <section className="max-w-7xl mx-auto px-6 md:px-8 w-full">
-          <h2 className="font-serif text-2xl md:text-3xl font-bold text-center text-primary mb-12">{details.title}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {details.items.map((item, idx) => (
-              <div key={idx} className="p-8 bg-earth-50 rounded-xl border border-earth-100 flex flex-col gap-3">
-                <span className="font-serif text-3xl font-bold text-accent">0{idx + 1}</span>
-                <h3 className="font-serif text-lg font-bold text-primary">{item.title}</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* ALL PRODUCTS CATALOG GRID */}
         <section className="max-w-7xl mx-auto px-6 md:px-8 w-full">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="font-serif text-2xl font-bold text-primary">All Ready-to-Wear</h2>
-            <Link to="/collections/all" className="text-xs font-semibold text-accent hover:underline">
-              Browse full catalog →
+          <div className="flex justify-between items-center mb-8 border-b border-slate-100 pb-4">
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-widest text-accent block mb-1">
+                Full Catalog
+              </span>
+              <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary">
+                All Handcrafted Ready-to-Wear & Bags
+              </h2>
+            </div>
+            <Link to="/collections/all" className="text-xs font-semibold text-accent hover:underline flex items-center gap-1">
+              Browse full catalog <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
           <ProductGrid products={allProducts} isLoading={loadingAll} />
         </section>
+
 
         {/* VALUE PROPOSITION BAR */}
         <section className="bg-surface-muted py-12 border-y border-slate-200">
@@ -208,7 +165,7 @@ export const HomePage: React.FC = () => {
             <div className="flex flex-col items-center gap-2">
               <Headphones className="w-8 h-8 text-accent" />
               <h4 className="font-serif text-base font-bold text-primary">24/7 support</h4>
-              <p className="text-xs text-slate-500">Call us anytime at 1(800) 555-1234.</p>
+              <p className="text-xs text-slate-500">Call us anytime at {brandConfig.contact.phone}.</p>
             </div>
           </div>
         </section>
@@ -216,3 +173,4 @@ export const HomePage: React.FC = () => {
     </>
   );
 };
+

@@ -6,6 +6,7 @@ export function useProduct(handle: string) {
     queryKey: ['product', handle],
     queryFn: () => productRepository.getProductByHandle(handle),
     enabled: !!handle,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 15,
   });
 }
+
